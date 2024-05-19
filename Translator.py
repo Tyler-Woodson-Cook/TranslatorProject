@@ -11,9 +11,10 @@ warnings.filterwarnings('ignore')
 
 import random
 import numpy as np
-import mxnet as mx
-from mxnet import gluon
-import gluonnlp as nlp
+import mxnet as mx 
+from mxnet import gluon 
+import gluonnlp as nlp 
+
 nlp.utils.check_version('0.7.0')
 
 # setting up the enviroment with the Gluon API recommended settings 
@@ -23,7 +24,7 @@ random.seed(100)
 mx.random.seed(10000)
 ctx = mx.gpu(0) 
 
-import nmt
+import nmt 
 
 wmt_model_name = 'transformer_en_de_512'
 
@@ -39,7 +40,7 @@ print(len(wmt_src_vocab), len(wmt_tgt_vocab))
 # split the string input to a list of tokens
 # map the string token into its index in the vocabulary
 # append EOS token to source sentence and add BOS and EOS tokens to target sentence.
-import hyperparameters as hparams
+import hyperparameters as hparams 
 
 
 wmt_data_test = nlp.data.WMT2014BPE('newstest2014', src_lang=hparams.src_lang, tgt_lang=hparams.tgt_lang)
@@ -114,6 +115,7 @@ wmt_translator = nmt.translation.BeamSearchTranslator(
 
 
 # model loss and bleu score calculation
+# BLEU is an algorithm for evaluating the quality of text which has been machine-translated from one language to another.
 import time
 import utils
 
@@ -124,8 +126,11 @@ wmt_test_loss_function.hybridize()
 
 wmt_detokenizer = nlp.data.SacreMosesDetokenizer()
 
+# test loss via the utils evaluate functions
 wmt_test_loss, wmt_test_translation_out = utils.evaluate(wmt_transformer_model, wmt_test_data_loader, wmt_test_loss_function, wmt_translator, wmt_tgt_vocab, wmt_detokenizer,ctx)
 
+
+# bleu score calculations via nmt function
 wmt_test_bleu_score, _, _, _, _ = nmt.bleu.compute_bleu([wmt_test_tgt_sentences],wmt_test_translation_out,tokenized=False, tokenizer=hparams.bleu,split_compound_word=False, bpe=False)
 
 print('WMT14 EN-DE SOTA model test loss: %.2f; test bleu score: %.2f; time cost %.2fs'
@@ -134,6 +139,7 @@ print('WMT14 EN-DE SOTA model test loss: %.2f; test bleu score: %.2f; time cost 
 print('Sample translations:')
 num_pairs = 3
 
+# translates 
 for i in range(num_pairs):
     print('EN:')
     print(wmt_test_text[i][0])
@@ -146,7 +152,7 @@ for i in range(num_pairs):
 
 
 # actual translation begins
-import utils
+
 
 print('Translate the following English sentence into German:')
 
